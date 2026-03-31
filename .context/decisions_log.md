@@ -31,3 +31,10 @@ required for basic use. More reliable than ngrok free tier.
 **Decision:** Dedicated Jio SIM for bot WhatsApp number
 **Reason:** OpenClaw uses unofficial Baileys protocol. Separating bot number
 from personal number reduces ban risk and keeps business communication clean.
+
+### 2026-03-31 (updated)
+**Decision:** Two separate NIM API keys
+**Reason:** Key 1 for OpenClaw agent brain, Key 2 for FastAPI backend.
+Separate rate limit buckets. Independent credit tracking on build.nvidia.com.
+Both keys stored only in .env — never committed to GitHub.
+.env is in .gitignore — confirmed safe.
