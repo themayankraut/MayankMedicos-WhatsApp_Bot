@@ -7,11 +7,11 @@
 ## Current Stack
 | Layer | Tool | Status |
 |---|---|---|
-| WhatsApp Gateway | OpenClaw (Baileys) | Not installed yet |
+| WhatsApp Gateway | OpenClaw (Baileys) | Installed & working |
 | Internet Tunnel | Cloudflare Tunnel | Not set up yet |
 | Backend | Python FastAPI | Files created, not written yet |
-| AI — Simple turns | Gemini 1.5 Flash (free) | Key needed |
-| AI — Complex turns | Claude Sonnet | Key needed |
+| AI — Primary | NVIDIA NIM (Llama 3.1/3.3 via OpenClaw) | Working |
+| AI — Secondary (optional) | Gemini / Claude | Not configured |
 | Inventory | Google Sheets | Sheet not created yet |
 | Orders | SQLite (local) | Not set up yet |
 | IDE | Google Antigravity | Active |
@@ -19,19 +19,17 @@
 ---
 
 ## Last Completed Task
-Project folder structure created. All base files created.
-Git repo initialised and pushed to GitHub.
-
----
+Project folder structure created. OpenClaw installed and configured on WSL.
+NVIDIA NIM integrated and working via OpenClaw UI.
 
 ## Next Immediate Step
-1. Get Gemini API key from aistudio.google.com → paste into .env
-2. Get Claude API key from console.anthropic.com → paste into .env
-3. Create Google Sheet inventory → paste Sheet ID into .env
-4. Write backend/main.py — minimal FastAPI /webhook endpoint
-5. Test: send WhatsApp message → get reply
+## Next Immediate Step
+1. Build FastAPI backend (/webhook endpoint)
+2. Connect OpenClaw → FastAPI
+3. Create Google Sheets inventory
+4. Implement inventory.py (read stock)
+5. Test end-to-end flow (message → AI → response)
 
----
 
 ## Current Blockers
 - Gemini API key not yet obtained

@@ -38,3 +38,12 @@ from personal number reduces ban risk and keeps business communication clean.
 Separate rate limit buckets. Independent credit tracking on build.nvidia.com.
 Both keys stored only in .env — never committed to GitHub.
 .env is in .gitignore — confirmed safe.
+
+### 2026-03-31 (updated 2)
+**Decision:** Use NVIDIA NIM (Llama 3.1/3.3) via OpenClaw as primary LLM
+**Reason:** Higher accuracy than Gemini Flash, better control vs Claude cost.
+OpenClaw acts as orchestration layer. Latency (~3–5s) acceptable for pharmacy use.
+
+**Decision:** Use OpenClaw UI only for debugging, not production
+**Reason:** UI introduces tool overhead and latency. Production system will call
+OpenClaw or backend APIs directly (FastAPI), not rely on UI sessions.
