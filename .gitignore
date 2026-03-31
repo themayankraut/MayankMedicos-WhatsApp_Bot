@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Secrets — never commit these
+.env
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Node (for OpenClaw)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Antigravity
+.antigravity/
