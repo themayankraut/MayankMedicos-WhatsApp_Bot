@@ -1,10 +1,8 @@
 fastapi
 uvicorn[standard]
 python-dotenv
-google-generativeai
-anthropic
+NVIDIA(via OpenClaw)
 gspread
 google-auth
 aiohttp
 requests
-openai
