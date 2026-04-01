@@ -1,39 +1,59 @@
 # backend/main.py
 # WhatsApp Medical Store Bot — Main FastAPI Server
-# Status: Phase 1 skeleton — not functional yet
-# Next step: Build /webhook endpoint and connect to ai_router.py
+# Receives messages from OpenClaw, routes to NIM, sends reply back
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+import logging
+
+from backend.ai_router import call_simple, call_complex
+from backend.conversation import get_session, update_session
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
+
 @app.get("/")
 def root():
-    return {"status": "MedStore Bot is running", "phase": 1}
+    return {"status": "MedStore Bot running", "phase": 1}
+
 
 @app.post("/webhook")
-async def webhook(data: dict):
-    # TODO: Parse incoming OpenClaw message
-    # TODO: Pass to ai_router.py
-    # TODO: Return response to OpenClaw
-    return {"status": "received"}
-```
+async def webhook(request: Request):
+    try:
+        data = await request.json()
+        logger.info(f"Incoming: {data}")
 
-Press **Ctrl + S**. Repeat the same pattern for the other backend files — just add a comment at the top saying what the file will do. No actual logic yet.
+        # OpenClaw sends messages in this format
+        message_text = data.get("message", "")
+        sender        = data.get("sender", "unknown")
 
----
+        if not message_text:
+            return JSONResponse({"reply": ""})
 
-## Setting Up the Agent Rule (One-Time Step)
+        # Get or create session for this patient
+        session = get_session(sender)
 
-This is the most useful thing you can do in Antigravity right now. Go to the bottom-right of the Editor view → click **Antigravity - Settings** → Customizations → Manage.  Add a new Rule with this content:
-```
-This project is a WhatsApp medical store bot for Mayank's Medical Store, Delhi.
-Stack: Python FastAPI backend, OpenClaw WhatsApp gateway, Gemini 1.5 Flash for
-simple turns, Claude Sonnet for complex turns, Google Sheets for inventory,
-SQLite for orders, Cloudflare Tunnel for internet access.
+        # Route to correct NIM model based on session step
+        if session.get("step") in ["medicine_search"]:
+            reply = await call_complex(
+                prompt=message_text,
+                system="You are a helpful pharmacy assistant. Reply concisely."
+            )
+        else:
+            reply = await call_simple(
+                prompt=message_text,
+                system="You are a helpful pharmacy assistant. Reply concisely."
+            )
 
-Always read .context/project_state.md before suggesting any changes.
-Never suggest changes that contradict .context/decisions_log.md.
-Keep all code compatible with Python 3.10+.
-Use async/await throughout the FastAPI backend.
-Never hardcode API keys — always read from .env using python-dotenv.
+        # Update session
+        update_session(sender, {"last_message": message_text})
+
+        logger.info(f"Reply to {sender}: {reply}")
+        return JSONResponse({"reply": reply})
+
+    except Exception as e:
+        logger.error(f"Webhook error: {e}")
+        return JSONResponse({"reply": "Sorry, something went wrong. Please try again."})
