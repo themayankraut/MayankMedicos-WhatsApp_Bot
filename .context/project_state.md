@@ -1,5 +1,5 @@
 # Project State
-**Last updated:** 2026-03-31 · Claude
+**Last updated:** 2026-03-31 · Claude (synced after ChatGPT session)
 **Current phase:** 1 — Foundation
 
 ---
@@ -7,37 +7,41 @@
 ## Current Stack
 | Layer | Tool | Status |
 |---|---|---|
-| WhatsApp Gateway | OpenClaw (Baileys) | Installed & working |
-| Internet Tunnel | Cloudflare Tunnel | Not set up yet |
-| Backend | Python FastAPI | Files created, not written yet |
-| AI — Primary | NVIDIA NIM (Llama 3.1/3.3 via OpenClaw) | Working |
-| AI — Secondary (optional) | Gemini / Claude | Not configured |
-| Inventory | Google Sheets | Sheet not created yet |
-| Orders | SQLite (local) | Not set up yet |
-| IDE | Google Antigravity | Active |
+| WhatsApp Gateway | OpenClaw (Baileys) on WSL | ✅ Installed & working |
+| Internet Tunnel | Cloudflare Tunnel | ❌ Not set up yet |
+| Backend | Python FastAPI | ❌ Files created, not written yet |
+| AI — Primary | NVIDIA NIM — Llama 3.1 8B (simple) + Llama 3.3 70B (complex) | ✅ Working via OpenClaw |
+| AI — Fallback (optional) | Gemini 1.5 Flash / Claude Sonnet | ⏳ Not configured yet |
+| Inventory | Google Sheets | ❌ Sheet not created yet |
+| Orders | SQLite (local) | ❌ Not set up yet |
+| IDE | Google Antigravity | ✅ Active |
 
 ---
 
 ## Last Completed Task
-Project folder structure created. OpenClaw installed and configured on WSL.
-NVIDIA NIM integrated and working via OpenClaw UI.
+OpenClaw installed on WSL. NVIDIA NIM (Llama 3.1/3.3) integrated and
+confirmed working via OpenClaw UI. Dual NIM API keys configured — Key 1
+for OpenClaw brain, Key 2 for FastAPI backend. openclaw.json fixed after
+auth.profiles error. Project folder structure and all base files created.
+Pushed to GitHub.
+
+---
 
 ## Next Immediate Step
-## Next Immediate Step
-1. Build FastAPI backend (/webhook endpoint)
-2. Connect OpenClaw → FastAPI
-3. Create Google Sheets inventory
-4. Implement inventory.py (read stock)
-5. Test end-to-end flow (message → AI → response)
+1. Set up Cloudflare Tunnel (exposes local PC to internet)
+2. Build backend/main.py — FastAPI /webhook endpoint
+3. Connect OpenClaw → FastAPI webhook
+4. Create Google Sheets inventory (Medicines, Surgical, BabyFood, Cosmetics tabs)
+5. Write backend/inventory.py (reads stock from Google Sheet)
+6. Test end-to-end: patient sends WhatsApp message → NIM processes → reply sent
 
+---
 
 ## Current Blockers
-- Gemini API key not yet obtained
-- Claude API key not yet obtained
-- Google Sheet not yet created
-- OpenClaw not yet installed
-- EvitalRX API not available on basic plan
-  → Using Google Sheets as inventory replacement
+- Cloudflare Tunnel not set up — bot not reachable from internet yet
+- Google Sheet inventory not created
+- FastAPI backend code not written yet
+- Gemini/Claude API keys not obtained (not blocking — NIM is primary)
 
 ---
 
@@ -50,12 +54,12 @@ whatsapp-medstore-bot/
     handover_template.md   ← copy-paste when switching AIs
   backend/
     main.py                ← FastAPI app (not written yet)
-    ai_router.py           ← Gemini vs Claude routing (not written yet)
-    conversation.py        ← session state (not written yet)
-    inventory.py           ← Google Sheets reads (not written yet)
+    ai_router.py           ← NIM Llama routing — simple vs complex turns
+    conversation.py        ← session state per patient (not written yet)
+    inventory.py           ← Google Sheets stock reads (not written yet)
     delivery.py            ← delivery window logic (not written yet)
     orders.py              ← SQLite order saving (not written yet)
-  .env                     ← secrets (not on GitHub)
+  .env                     ← secrets (not on GitHub — in .gitignore)
   .gitignore
   requirements.txt
 ```
@@ -63,8 +67,9 @@ whatsapp-medstore-bot/
 ---
 
 ## Known Issues / Notes
-- EvitalRX API only on higher plan. Basic plan = no API access.
-  Decision: Google Sheets mirrors stock. Manual EvitalRX entry for billing.
-- OpenClaw uses unofficial WhatsApp Baileys protocol. Use dedicated SIM only.
-- Gemini 1.5 Flash free tier may use prompts for training. Acceptable for
-  simple turns (no patient data in those prompts). Switch to paid if needed.
+- EvitalRX API only on higher plan → using Google Sheets as inventory.
+  Manual EvitalRX entry for billing by owner. Swap is one-file change later.
+- OpenClaw uses unofficial WhatsApp Baileys protocol. Dedicated Jio SIM only.
+- OpenClaw UI used for debugging only. Production calls go FastAPI → NIM directly.
+- NIM free credits (1,000 per key × 2 keys = 2,000 total) cover full dev + testing.
+- openclaw.json contains sensitive tokens — must never be committed to GitHub.
