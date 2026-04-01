@@ -1,8 +1,5 @@
-fastapi
-uvicorn[standard]
-python-dotenv
-NVIDIA(via OpenClaw)
-gspread
-google-auth
-aiohttp
-requests
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+python-dotenv>=1.0.0
+openai>=1.25.0
+websockets>=12.0
